@@ -2,7 +2,9 @@ import requests
 import json
 from logger import getLogger
 from config import loadConfig
+from elapsed import elapsed
 
+@elapsed
 def weather():
     log = getLogger('openweathermap')
 
@@ -23,4 +25,5 @@ def weather():
     return data
 
 if __name__ == '__main__':
-    weather()
+    data = weather()
+    print(data.get('wind').get('gust', '-'))
