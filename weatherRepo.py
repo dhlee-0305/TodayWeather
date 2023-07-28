@@ -9,50 +9,38 @@ log = getLogger('weatherRepo')
 
 @elapsed
 def w_info_all():
-    con = dbConnect()
-    cur = con.cursor()
     sql = 'SELECT * FROM w_info'
-    cur.execute(sql)
-    rows = cur.fetchall()
-
+    rows = select(sql)
     log.debug(rows)
-
-    con.close()
 
 @elapsed
 def w_info_seq(seq):
-    con = dbConnect()
-    cur = con.cursor()
     sql = f'SELECT * FROM w_info WHERE seq={seq}'
-    cur.execute(sql)
-    rows = cur.fetchall()
-
+    rows = select(sql)
     log.debug(rows)
-
-    con.close()
 
 @elapsed
 def saveWeather(data):
     con = dbConnect()
     cur = con.cursor()
     
-    sql = 'INSERT INTO w_info(base, visibility, dt, timezone, id, w_name, cod) VALUES(%s, %s, %s, %s, %s, %s, %s)'
-    vals = (data.get('base'), \
+    sql_w_info = 'INSERT INTO w_info(base, visibility, dt, timezone, id, w_name, cod) VALUES(%s, %s, %s, %s, %s, %s, %s)'
+    vals_w_info = (data.get('base'), \
             data.get('visibility'), \
             str(data.get('dt')), \
             str(data.get('timezone')), \
             str(data.get('id')), \
             str(data.get('name')), \
             data.get('cod'))
-    cur.execute(sql, vals)
+    log.debug('vals_w_info: ' + str(vals_w_info))
+    cur.execute(sql_w_info, vals_w_info)
     seq = cur.lastrowid
-    log.debug(vals)
 
     sql_coord = 'INSERT INTO w_coord(seq, lon, lat) VALUES(%s, %s, %s)'
     vals_coord = (seq, \
                 str(data.get('coord').get('lon')), \
                 str(data.get('coord').get('lat')))
-    log.debug(vals_coord)
+    log.debug('vals_coord: ' + str(vals_coord))
     cur.execute(sql_coord, vals_coord)
 
     sql_weather = 'INSERT INTO w_weather(seq, id, main, description, icon) VALUES(%s, %s, %s, %s, %s)'
@@ -61,7 +49,7 @@ def saveWeather(data):
                     str(data.get('weather')[0].get('main')), \
                     str(data.get('weather')[0].get('description')), \
                     str(data.get('weather')[0].get('icon')))
-    log.debug(vals_weather)
+    log.debug('vals_weather: ' + str(vals_weather))
     cur.execute(sql_weather, vals_weather)
     
     sql_main = 'INSERT INTO w_main(seq, temp, feels_like, temp_min, temp_max, pressure, humidity, sea_level, grnd_level) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -74,7 +62,7 @@ def saveWeather(data):
                 data.get('main').get('humidity'), \
                 data.get('main').get('sea_level'), \
                 data.get('main').get('grnd_level'))
-    log.debug(vals_main)
+    log.debug('vals_main: ' + str(vals_main))
     cur.execute(sql_main, vals_main)
 
     sql_wind = 'INSERT INTO w_wind(seq, speed, deg, gust) VALUES(%s, %s, %s, %s)'
@@ -82,12 +70,12 @@ def saveWeather(data):
                 data.get('wind').get('speed'), \
                 data.get('wind').get('deg'), \
                 data.get('wind').get('gust'))
-    log.debug(vals_wind)
+    log.debug('vals_wind: ' + str(vals_wind))
     cur.execute(sql_wind, vals_wind)
 
     sql_clouds = 'INSERT INTO w_clouds(seq, w_all) VALUES(%s, %s)'
     vals_clouds = (seq, data.get('clouds').get('all'))
-    log.debug(vals_clouds)
+    log.debug('vals_clouds: ' + str(vals_clouds))
     cur.execute(sql_clouds, vals_clouds)
 
     sql_sys = 'INSERT INTO w_sys(seq, w_type, id, country, sunrise, sunset) VALUES(%s, %s, %s, %s, %s, %s)'
@@ -97,7 +85,7 @@ def saveWeather(data):
                 str(data.get('sys').get('country')), \
                 str(data.get('sys').get('sunrise')), \
                 str(data.get('sys').get('sunset')))
-    log.debug(vals_sys)
+    log.debug('vals_sys: ' + str(vals_sys))
     cur.execute(sql_sys, vals_sys)
 
     con.commit()
@@ -110,4 +98,4 @@ if __name__ == '__main__':
     # data = json.loads(data)
     # seq = saveWeather(data)
     # w_info_seq(seq)
-    w_info_seq(1)
+    w_info_seq(38)
