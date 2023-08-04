@@ -3,7 +3,7 @@ import json
 from logger import getLogger
 from config import loadConfig
 from openweathermap import *
-from weatherRepo import *
+from weatherRepository import *
 
 log = getLogger('TodayWeather')
 

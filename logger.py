@@ -13,7 +13,7 @@ class LOG_LEVEL(Enum):
     ERROR    = logging.ERROR
     CRITICAL = logging.CRITICAL
 
-def getLogger(logName):
+def getLogger(logName, fileName='TodayWeather'):
     """공통 로그 인스턴스를 반환
     :param logName: 로거 이름
     :return: logging 인스턴스
@@ -29,7 +29,7 @@ def getLogger(logName):
 
     logFormat = logging.Formatter('%(asctime)s|%(name)s|%(funcName)s|%(levelname)s|%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     YYYYMMDD = datetime.datetime.now().strftime("%Y%m%d")
-    logFileHandler = logging.FileHandler(config['ENV']['LOG_FILE_PATH']+YYYYMMDD+"_TodayWeather.log")
+    logFileHandler = logging.FileHandler(config['ENV']['LOG_FILE_PATH']+YYYYMMDD+'_'+fileName+'.log')
     logFileHandler.setFormatter(logFormat)
     log.addHandler(logFileHandler)
 
